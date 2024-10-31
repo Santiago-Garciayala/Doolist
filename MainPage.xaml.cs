@@ -70,7 +70,11 @@ namespace Doolist
                 case 0:
                     string name = await DisplayPromptAsync("", "Enter a name for your category");
                     if (name == null) { name = "Category"; };
-                    categories.Add(new Category(name));
+                    Category cat = new Category(name);
+                    Grid display = CreateCategoryDisplay(cat);
+                    categories.Add(cat);
+                    ContentCell.Add(display);
+                    ResizeTemplateButtons(display);
                     break;
                 case 1:
                     currentCategory.AddList(new TodoList());
@@ -88,10 +92,80 @@ namespace Doolist
             double height = ((Grid)btn.Parent).Height;
             double width = ((Grid)btn.Parent).Width;
 
-            btn.HeightRequest = height * .075;
-            btn.WidthRequest = height * .075;
+            btn.HeightRequest = height * .04;
+            btn.WidthRequest = height * .04;
         }
 
+        void ResizeTemplateButtons(Grid grid)
+        {
+            foreach (var child in grid.Children)
+            {
+                if(child.GetType() == typeof(ImageButton))
+                {
+                    ResizeTemplateButton(child, new EventArgs());
+                }
+            }
+        }
+        private void DisplayCategorySettings(object sender, EventArgs e)
+        {
+            //TODO
+        }
+
+        private Grid CreateCategoryDisplay(Category category)
+        {
+            Grid display = new Grid
+            {
+                ColumnDefinitions =
+                {
+                    new ColumnDefinition{ Width = new GridLength(1, GridUnitType.Auto)},
+                    new ColumnDefinition{ Width = new GridLength(1, GridUnitType.Star)},
+                    new ColumnDefinition{ Width = new GridLength(1, GridUnitType.Auto)}
+                },
+                RowDefinitions =
+                {
+                    new RowDefinition{ Height = new GridLength (1, GridUnitType.Auto)},
+                    new RowDefinition{ Height = new GridLength (1, GridUnitType.Auto)}
+                },
+                //ColumnSpacing = 3,
+                //RowSpacing = 3,
+                BackgroundColor = Colors.AliceBlue,
+                Margin = new Thickness(10, 10, 10, 0)
+            };
+
+            Label titleLabel = new Label
+            {
+                Text = category.title,
+                FontAttributes = FontAttributes.Bold,
+                FontSize = 40
+            };
+            display.Add(titleLabel, 0, 0);
+
+            Label countLabel = new Label { Text = category.CountDisplay };
+            display.Add(countLabel, 0, 1);
+
+            ImageButton pinned = new ImageButton
+            {
+                Source = "pin.png",
+                Padding = 5,
+                BackgroundColor = Colors.Transparent
+            };
+            pinned.Loaded += ResizeTemplateButton;
+            display.Add(pinned, 2, 0);
+            //ResizeTemplateButton(pinned, new EventArgs());
+
+            ImageButton settingsBtn = new ImageButton
+            {
+                Source = "threedots.png",
+                Padding = 5,
+                BackgroundColor = Colors.Transparent
+            };
+            settingsBtn.Loaded += ResizeTemplateButton;
+            settingsBtn.Pressed += DisplayCategorySettings;
+            display.Add(settingsBtn, 2, 1);
+            //ResizeTemplateButton(settingsBtn, new EventArgs());
+
+            return display;
+        }
     }
 
 }
