@@ -4,58 +4,60 @@
              x:Class="Doolist.MainPage"
              Title="">
 
-    <ScrollView>
+    <VerticalStackLayout>
+        <Grid x:Name="TopBar" BackgroundColor="BlanchedAlmond" Padding="1" ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto">
+            <ImageButton x:Name="BackButton" Source="backarrow.png" Grid.Column="0" BackgroundColor="BlanchedAlmond" Padding="5"></ImageButton>
+            <ImageButton x:Name="SettingsButton" Source="threedots.png" Grid.Column="2" BackgroundColor="BlanchedAlmond" Padding="5"></ImageButton>
+        </Grid>
         <VerticalStackLayout>
-            <Grid x:Name="TopBar" BackgroundColor="BlanchedAlmond" Padding="1" ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto">
-                <ImageButton x:Name="BackButton" Source="backarrow.png" Grid.Column="0" BackgroundColor="BlanchedAlmond" Padding="5"></ImageButton>
-                <ImageButton x:Name="SettingsButton" Source="threedots.png" Grid.Column="2" BackgroundColor="BlanchedAlmond" Padding="5"></ImageButton>
-            </Grid>
-            <Grid x:Name="ContentGrid" ColumnDefinitions="*,Auto,Auto" RowDefinitions="*,Auto,Auto" ColumnSpacing="3" RowSpacing="3">
-                <!--
-                <CollectionView
-                    x:Name="CategoriesView"
-                    ItemsSource="{Binding categories}"
-                    Grid.Column="0" 
-                    Grid.Row="0" 
-                    Grid.ColumnSpan="3" 
-                    Grid.RowSpan="3"
-                    ZIndex="1">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Padding="3" BackgroundColor="AliceBlue" ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
-                                <Label Text="{Binding title}" Grid.Column="0" Grid.Row="0" FontAttributes="Bold" FontSize="30"></Label>
-                                <Label Text="{Binding CountDisplay}" Grid.Column="0" Grid.Row="1"></Label>
-                                this ones supposed to be just an image but it wouldnt let me do padding with an Image ¯\_(ツ)_/¯ 
-                                <ImageButton Source="pin.png" Grid.Column="2" Grid.Row="0" Padding="5" Loaded="ResizeTemplateButton" ></ImageButton>
-                                <ImageButton Source="threedots.png" Grid.Column="2" Grid.Row="1" Padding="5" Loaded="ResizeTemplateButton" Pressed="DisplayCategorySettings"></ImageButton>
-                            </Grid>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-                -->
-                
-                <VerticalStackLayout x:Name="ContentCell" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="3" ZIndex="1">
-                    <!--Here goes the ACTUAL content-->
-                </VerticalStackLayout>
+            <ScrollView x:Name="ContentScrollView" VerticalOptions="FillAndExpand">
+                <Grid x:Name="ContentGrid" ColumnDefinitions="*,Auto,Auto" RowDefinitions="*,Auto,Auto" ColumnSpacing="3" RowSpacing="3">
+                    <!--
+                        <CollectionView
+                            x:Name="CategoriesView"
+                            ItemsSource="{Binding categories}"
+                            Grid.Column="0" 
+                            Grid.Row="0" 
+                            Grid.ColumnSpan="3" 
+                            Grid.RowSpan="3"
+                            ZIndex="1">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Padding="3" BackgroundColor="AliceBlue" ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
+                                        <Label Text="{Binding title}" Grid.Column="0" Grid.Row="0" FontAttributes="Bold" FontSize="30"></Label>
+                                        <Label Text="{Binding CountDisplay}" Grid.Column="0" Grid.Row="1"></Label>
+                                        this ones supposed to be just an image but it wouldnt let me do padding with an Image ¯\_(ツ)_/¯ 
+                                        <ImageButton Source="pin.png" Grid.Column="2" Grid.Row="0" Padding="5" Loaded="ResizeTemplateButton" ></ImageButton>
+                                        <ImageButton Source="threedots.png" Grid.Column="2" Grid.Row="1" Padding="5" Loaded="ResizeTemplateButton" Pressed="DisplayCategorySettings"></ImageButton>
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                        -->
 
-                <!--Deal with having this in the right place later-->
-                <ImageButton x:Name="AddButton" 
-                                Source="plussign.png" 
-                                BackgroundColor="BlanchedAlmond"
-                                Padding="5"
-                                Grid.Column="1"
-                                Grid.Row="1"
-                                ZIndex="2">
-                </ImageButton>
-                <BoxView 
-                        x:Name="ContentGridFillerBox"
-                        Color="Transparent"
-                        Grid.Column="2"
-                        Grid.Row="2"
-                        ZIndex="0">
-                </BoxView>
-            </Grid>
+                    <VerticalStackLayout x:Name="ContentCell" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="3" ZIndex="1">
+                        <!--Here goes the ACTUAL content-->
+                    </VerticalStackLayout>
+
+                    <!--TODO: have this always be in the lower right corner-->
+                    <ImageButton x:Name="AddButton" 
+                                        Source="plussign.png" 
+                                        BackgroundColor="BlanchedAlmond"
+                                        Padding="5"
+                                        Grid.Column="1"
+                                        Grid.Row="1"
+                                        ZIndex="2">
+                    </ImageButton>
+                    <BoxView 
+                                x:Name="ContentGridFillerBox"
+                                Color="Transparent"
+                                Grid.Column="2"
+                                Grid.Row="2"
+                                ZIndex="0">
+                    </BoxView>
+                </Grid>
+            </ScrollView>
         </VerticalStackLayout>
-    </ScrollView>
+    </VerticalStackLayout>
 
 </ContentPage>

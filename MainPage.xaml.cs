@@ -28,12 +28,14 @@ namespace Doolist
             base.OnSizeAllocated(width, height);
             ResizeTopBar();
             ResizeAddButton();
+            ResizeContentScrollView();
         }
 
         void OnWindowChanged(object sender, EventArgs e)
         {
             ResizeTopBar();
             ResizeAddButton();
+            ResizeContentScrollView();
         }
 
         void ResizeTopBar()
@@ -61,6 +63,14 @@ namespace Doolist
             AddButton.WidthRequest = height * .05;
 
 
+        }
+
+        void ResizeContentScrollView()
+        {
+            double height = this.Height;
+            double width = this.Width;
+
+            ContentScrollView.HeightRequest = height * .95;
         }
 
         async void OnAddButtonPressed(object sender, EventArgs e)
