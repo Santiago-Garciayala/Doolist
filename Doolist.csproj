@@ -61,8 +61,10 @@
 	  <None Remove="Resources\Images\fwarrow.png" />
 	  <None Remove="Resources\Images\pin.png" />
 	  <None Remove="Resources\Images\plussign.png" />
+	  <None Remove="Resources\Images\redo.png" />
 	  <None Remove="Resources\Images\settings.png" />
 	  <None Remove="Resources\Images\threedots.png" />
+	  <None Remove="Resources\Images\undo.png" />
 	</ItemGroup>
 
 	<ItemGroup>

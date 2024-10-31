@@ -6,9 +6,11 @@
              Title="">
 
     <VerticalStackLayout>
-        <Grid x:Name="TopBar" BackgroundColor="BlanchedAlmond" Padding="1" ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto">
-            <ImageButton x:Name="BackButton" Source="backarrow.png" Grid.Column="0" BackgroundColor="BlanchedAlmond" Padding="5"></ImageButton>
-            <ImageButton x:Name="SettingsButton" Source="threedots.png" Grid.Column="2" BackgroundColor="BlanchedAlmond" Padding="5"></ImageButton>
+        <Grid x:Name="TopBar" BackgroundColor="BlanchedAlmond" Padding="1" ColumnDefinitions="Auto,*,Auto,Auto,Auto" RowDefinitions="Auto">
+            <ImageButton x:Name="BackButton" Source="backarrow.png" Grid.Column="0" BackgroundColor="BlanchedAlmond" Padding="5" IsEnabled="False" IsVisible="False"></ImageButton>
+            <ImageButton x:Name="UndoButton" Source="undo.png" Grid.Column="2" BackgroundColor="BlanchedAlmond" Padding="5" IsEnabled="False" IsVisible="False"></ImageButton>
+            <ImageButton x:Name="RedoButton" Source="redo.png" Grid.Column="3" BackgroundColor="BlanchedAlmond" Padding="5" IsEnabled="False" IsVisible="False"></ImageButton>
+            <ImageButton x:Name="SettingsButton" Source="threedots.png" Grid.Column="4" BackgroundColor="BlanchedAlmond" Padding="5"></ImageButton>
         </Grid>
         <VerticalStackLayout>
             <ScrollView x:Name="ContentScrollView" VerticalOptions="FillAndExpand">
@@ -51,7 +53,7 @@
                     </ImageButton>
                     <BoxView 
                                 x:Name="ContentGridFillerBox"
-                                Color="Transparent"
+                                Color="#00FFFFFF"
                                 Grid.Column="2"
                                 Grid.Row="2"
                                 ZIndex="0">

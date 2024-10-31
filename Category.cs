@@ -9,7 +9,7 @@ namespace Doolist
 {
     public class Category
     {
-        private ObservableCollection<TodoList> lists { get; } = new ObservableCollection<TodoList>();
+        public ObservableCollection<TodoList> lists { get; } = new ObservableCollection<TodoList>();
         public string title { get; set; } = "Title";
         public bool IsPinned { get; set; } = false;
         public string CountDisplay { get; set; }
@@ -19,14 +19,6 @@ namespace Doolist
             this.title = title;
             CountDisplay = lists.Count + " notes";
             lists.CollectionChanged += (s, e) => { CountDisplay = lists.Count + " notes"; };
-        }
-
-        public void AddList(TodoList list) { 
-            lists.Add(list);
-        }
-
-        public void RemoveList(TodoList list) { 
-            lists.Remove(list);
         }
 
     }
