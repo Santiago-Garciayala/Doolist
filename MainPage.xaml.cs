@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using Windows.Media.Streaming.Adaptive;
 
 namespace Doolist
 {
@@ -8,6 +7,7 @@ namespace Doolist
         public ObservableCollection<Category> categories = new ObservableCollection<Category>();
         public Category currentCategory;
         public TodoList currentList;
+
         //determines what type of page is displayed cuz i didnt wanna figure out how to navigate with AppShell
         //0 for categories, 1 for lists, 2 for specific list 
         private int mode = 0; 
@@ -20,6 +20,9 @@ namespace Doolist
             this.LayoutChanged += OnWindowChanged;
             AddButton.Pressed += OnAddButtonPressed;
             BackButton.Pressed += OnBackButtonPressed;
+
+            //I didnt really need to use an ObservableCollection here since im not using a CollectionView anymore but since its there i might as well do this
+            categories.CollectionChanged += (s, e) => { UpdateCategoryDisplays(); };
 
             categories.Add(new Category("Test"));
             SwitchToCategoriesMode();
@@ -84,7 +87,6 @@ namespace Doolist
                     if (name == null) { name = "Category"; };
                     Category cat = new Category(name);
                     categories.Add(cat);
-                    UpdateCategoryDisplays();
                     break;
                 case 1:
                     TodoList list = new TodoList();
@@ -221,6 +223,7 @@ namespace Doolist
         void UpdateBulletPointDisplays()
         {
             //TODO
+            //make it so it makes a new bullet point when the return key is pressed
         }
 
         public void SwitchToCategoriesMode()
@@ -263,6 +266,7 @@ namespace Doolist
         public void SwitchToBulletPointsMode(TodoList todoList)
         {
             mode = 2;
+            currentList = todoList;
 
             BackButton.IsEnabled = true;
             BackButton.IsVisible = true;
@@ -274,10 +278,45 @@ namespace Doolist
             AddButton.IsVisible = false;
 
             ContentCell.Clear();
+            ContentCell.Add(CreateTitleEditor());
             UpdateBulletPointDisplays();
 
             //TODO
         }
+
+        Editor CreateTitleEditor()
+        {
+            Editor editor = new Editor
+            {
+                FontSize = 60,
+                Placeholder = "Title",
+                Text = currentList.Title,
+                BackgroundColor = Color.FromArgb("00000000")
+            };
+
+            editor.TextChanged += OnTitleEditorTextChanged;
+
+            return editor;
+        }
+
+        void OnTitleEditorTextChanged(object sender, TextChangedEventArgs e)
+        {
+            Editor editor = (Editor)sender;
+            string output = e.NewTextValue.Replace("\n", "").Replace("\r", "").Replace("\t", "");
+            
+            if(output != e.NewTextValue)
+            {
+                editor.Text = output;
+            }
+
+            currentList.Title = output;
+        }
+
+        public void DeleteBulletPoint(object sender, EventArgs e)
+        {
+            //TODO
+        }
+
     }
 
 }

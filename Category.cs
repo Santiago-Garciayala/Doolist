@@ -17,8 +17,8 @@ namespace Doolist
 
         public Category(string title) { 
             this.title = title;
-            CountDisplay = lists.Count + " notes";
-            lists.CollectionChanged += (s, e) => { CountDisplay = lists.Count + " notes"; };
+            CountDisplay = lists.Count + " note(s)";
+            lists.CollectionChanged += (s, e) => { CountDisplay = lists.Count + " note(s)"; };
         }
 
     }

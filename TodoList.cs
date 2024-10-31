@@ -10,7 +10,7 @@ namespace Doolist
     public class TodoList
     {
         private ObservableCollection<BulletPoint> bulletPoints { get; } = new ObservableCollection<BulletPoint>();
-        public string Title { get; set; } = "Title";
+        public string Title { get; set; } = "";
         public bool IsPinned { get; set; } = false;
 
         public void AddBulletPoint(BulletPoint point)

@@ -64,6 +64,7 @@
 	  <None Remove="Resources\Images\redo.png" />
 	  <None Remove="Resources\Images\settings.png" />
 	  <None Remove="Resources\Images\threedots.png" />
+	  <None Remove="Resources\Images\trash.png" />
 	  <None Remove="Resources\Images\undo.png" />
 	</ItemGroup>
 
