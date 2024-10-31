@@ -19,8 +19,8 @@ namespace Doolist
             this.LayoutChanged += OnWindowChanged;
             AddButton.Pressed += OnAddButtonPressed;
 
-            BindingContext = this;
             categories.Add(new Category("Test"));
+            UpdateCategoryDisplays();
         }
 
         protected override void OnSizeAllocated(double width, double height)
@@ -81,10 +81,8 @@ namespace Doolist
                     string name = await DisplayPromptAsync("", "Enter a name for your category");
                     if (name == null) { name = "Category"; };
                     Category cat = new Category(name);
-                    Grid display = CreateCategoryDisplay(cat);
                     categories.Add(cat);
-                    ContentCell.Add(display);
-                    ResizeTemplateButtons(display);
+                    UpdateCategoryDisplays();
                     break;
                 case 1:
                     currentCategory.AddList(new TodoList());
@@ -93,9 +91,10 @@ namespace Doolist
                     DisplayAlert("Alert", "You shouldnt be able to see this button", "OK");
                     break;
             }
+
         }
 
-        void ResizeTemplateButton(object sender, EventArgs e)
+        public void ResizeTemplateButton(object sender, EventArgs e)
         {
             ImageButton btn = (ImageButton)sender;
 
@@ -116,65 +115,40 @@ namespace Doolist
                 }
             }
         }
-        private void DisplayCategorySettings(object sender, EventArgs e)
+        public void DisplayCategorySettings(object sender, EventArgs e)
         {
             //TODO
         }
 
-        private Grid CreateCategoryDisplay(Category category)
+        void UpdateCategoryDisplays()
         {
-            Grid display = new Grid
-            {
-                ColumnDefinitions =
+            bool onlyPush = true;
+
+            for(int i = 0; i < categories.Count - 1 || categories.Count == 0; ++i) {
+                if (categories[i] != ((CategoryDisplay)ContentCell.Children[i]).category)
                 {
-                    new ColumnDefinition{ Width = new GridLength(1, GridUnitType.Auto)},
-                    new ColumnDefinition{ Width = new GridLength(1, GridUnitType.Star)},
-                    new ColumnDefinition{ Width = new GridLength(1, GridUnitType.Auto)}
-                },
-                RowDefinitions =
+                    onlyPush = false; 
+                    break;
+                }
+            }
+
+            if (onlyPush) 
+            {
+                CategoryDisplay display = new CategoryDisplay(categories.Last(), this);
+                ContentCell.Add(display);
+                ResizeTemplateButtons(display);
+            }
+            else
+            {
+                ContentCell.Clear();
+                foreach (Category category in categories)
                 {
-                    new RowDefinition{ Height = new GridLength (1, GridUnitType.Auto)},
-                    new RowDefinition{ Height = new GridLength (1, GridUnitType.Auto)}
-                },
-                //ColumnSpacing = 3,
-                //RowSpacing = 3,
-                BackgroundColor = Colors.AliceBlue,
-                Margin = new Thickness(10, 10, 10, 0)
-            };
+                    CategoryDisplay display = new CategoryDisplay(category, this);
+                    ContentCell.Add(display);
+                    ResizeTemplateButtons(display);
+                }
+            }
 
-            Label titleLabel = new Label
-            {
-                Text = category.title,
-                FontAttributes = FontAttributes.Bold,
-                FontSize = 40
-            };
-            display.Add(titleLabel, 0, 0);
-
-            Label countLabel = new Label { Text = category.CountDisplay };
-            display.Add(countLabel, 0, 1);
-
-            ImageButton pinned = new ImageButton
-            {
-                Source = "pin.png",
-                Padding = 5,
-                BackgroundColor = Colors.Transparent
-            };
-            pinned.Loaded += ResizeTemplateButton;
-            display.Add(pinned, 2, 0);
-            //ResizeTemplateButton(pinned, new EventArgs());
-
-            ImageButton settingsBtn = new ImageButton
-            {
-                Source = "threedots.png",
-                Padding = 5,
-                BackgroundColor = Colors.Transparent
-            };
-            settingsBtn.Loaded += ResizeTemplateButton;
-            settingsBtn.Pressed += DisplayCategorySettings;
-            display.Add(settingsBtn, 2, 1);
-            //ResizeTemplateButton(settingsBtn, new EventArgs());
-
-            return display;
         }
     }
 
