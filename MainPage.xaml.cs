@@ -2,6 +2,26 @@
 
 namespace Doolist
 {
+
+    /*
+     TODO:
+    -implement preview of notes in mode 1
+    -implement DisplayCategorySettings
+    -implement DisplayListSettings
+    -implement pinning
+    -implement importance button
+    -implement persistence**
+    -implement undo and redo*
+    -implement search bar in mode 0
+
+    -fix plus button position
+    -fix positioning of template buttons android
+
+    after settings implemented: 
+    -implement sorting of elements
+    -implement color customization
+    -implement text options in mode 2
+     */
     public partial class MainPage : ContentPage
     {
         public ObservableCollection<Category> categories = new ObservableCollection<Category>();
@@ -20,8 +40,6 @@ namespace Doolist
             this.LayoutChanged += OnWindowChanged;
             AddButton.Pressed += OnAddButtonPressed;
             BackButton.Pressed += OnBackButtonPressed;
-
-            //I didnt really need to use an ObservableCollection here since im not using a CollectionView anymore but since its there i might as well do this
             categories.CollectionChanged += (s, e) => { UpdateDisplays(false); };
 
             categories.Add(new Category("Test"));
@@ -274,8 +292,6 @@ namespace Doolist
             ContentCell.Clear();
             ContentCell.Add(CreateTitleEditor());
             UpdateDisplays(false);
-
-            //TODO
         }
 
         Editor CreateTitleEditor()
@@ -323,7 +339,6 @@ namespace Doolist
             }
         }
 
-        //TODO: fix when deleting bp when length > 1
         public void DeleteBulletPoint(object sender, EventArgs e)
         {
             ImageButton btn = (ImageButton)sender;
@@ -331,6 +346,7 @@ namespace Doolist
             currentList.bulletPoints.Remove(parent.source);
         }
 
+        //TODO: pass in arg so onlyPush can be true if it just adds one
         void OnBulletPointsCollectionChanged(object sender, EventArgs e)
         {
             UpdateDisplays(false);
