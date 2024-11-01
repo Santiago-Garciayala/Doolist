@@ -7,19 +7,15 @@ using System.Threading.Tasks;
 
 namespace Doolist
 {
-    public class TodoList
+    public class TodoList : ListableElement
     {
-        private ObservableCollection<BulletPoint> bulletPoints { get; } = new ObservableCollection<BulletPoint>();
+        public ObservableCollection<BulletPoint> bulletPoints { get; } = new ObservableCollection<BulletPoint>();
         public string Title { get; set; } = "";
         public bool IsPinned { get; set; } = false;
 
-        public void AddBulletPoint(BulletPoint point)
+        public TodoList()
         {
-            bulletPoints.Add(point);
-        }
-
-        public void RemoveBulletPoint(BulletPoint point) { 
-            bulletPoints.Remove(point);
+            bulletPoints.Add(new BulletPoint());
         }
     }
 }

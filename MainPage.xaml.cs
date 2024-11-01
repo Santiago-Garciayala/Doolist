@@ -22,7 +22,7 @@ namespace Doolist
             BackButton.Pressed += OnBackButtonPressed;
 
             //I didnt really need to use an ObservableCollection here since im not using a CollectionView anymore but since its there i might as well do this
-            categories.CollectionChanged += (s, e) => { UpdateCategoryDisplays(); };
+            categories.CollectionChanged += (s, e) => { UpdateDisplays(false); };
 
             categories.Add(new Category("Test"));
             SwitchToCategoriesMode();
@@ -90,6 +90,7 @@ namespace Doolist
                     break;
                 case 1:
                     TodoList list = new TodoList();
+                    list.bulletPoints.CollectionChanged += OnBulletPointsCollectionChanged;
                     currentList = list;
                     currentCategory.lists.Add(list);
                     SwitchToBulletPointsMode(list);
@@ -119,7 +120,7 @@ namespace Doolist
 
         public void ResizeTemplateButton(object sender, EventArgs e)
         {
-            ImageButton btn = (ImageButton)sender;
+            VisualElement btn = (VisualElement)sender;
 
             double height = ((Grid)btn.Parent).Height;
             double width = ((Grid)btn.Parent).Width;
@@ -132,7 +133,7 @@ namespace Doolist
         {
             foreach (var child in grid.Children)
             {
-                if(child.GetType() == typeof(ImageButton))
+                if(child.GetType() == typeof(ImageButton) || child.GetType() == typeof(Button))
                 {
                     ResizeTemplateButton(child, new EventArgs());
                 }
@@ -150,6 +151,8 @@ namespace Doolist
 
         void UpdateCategoryDisplays()
         {
+            //this came before UpdateDisplays was abstracted to all 3 modes and is still used as a failsafe in UpdateDisplays
+
             bool onlyPush = true; //true if all (except the last) elements in categories list match the ones being displayed 
 
             if(categories.Count > ContentCell.Children.Count - 1)
@@ -159,7 +162,7 @@ namespace Doolist
                 onlyPush = false;
 
             for(int i = 0; i < categories.Count - 1 && onlyPush; ++i) {
-                if (categories[i] != ((CategoryDisplay)ContentCell.Children[i]).category)
+                if (categories[i] != ((CategoryDisplay)ContentCell.Children[i]).source)
                 {
                     onlyPush = false; 
                 }
@@ -184,46 +187,37 @@ namespace Doolist
 
         }
 
-        void UpdateTodoListDisplays()
+        void UpdateDisplays(bool onlyPush)
         {
-            bool onlyPush = true; //true if all (except the last) elements in currentCategory.lists list match the ones being displayed 
+            //kind of ugly fucky wucky method with a lot of type shenanigans but doing it this way made it so i could abstract 3 methods into 1 ¯\_(ツ)_/¯
 
-            if (currentCategory.lists.Count > ContentCell.Children.Count - 1)
-                onlyPush = false;
+            Type[] displayTypes = { typeof(CategoryDisplay), typeof(TodoListDisplay), typeof(BulletPointDisplay) };
+            object[] collections = { categories, currentCategory?.lists, currentList?.bulletPoints }; 
+            dynamic currentCollection = collections[mode]; //afaik this is unsafe but the alternative was *extremely* ugly and i also couldnt get it to work 
 
-            if (currentCategory.lists.Count == 0)
-                onlyPush = false;
-
-            for (int i = 0; i < currentCategory.lists.Count - 1 && onlyPush; ++i)
+            if (currentCollection == null)
             {
-                if (currentCategory.lists[i] != ((TodoListDisplay)ContentCell.Children[i]).list)
-                {
-                    onlyPush = false;
-                }
+                SwitchToCategoriesMode();
+                return;
             }
 
             if (onlyPush)
             {
-                TodoListDisplay display = new TodoListDisplay(currentCategory.lists.Last(), this);
+                dynamic display = Activator.CreateInstance(displayTypes[mode], currentCollection.Last(), this);
                 ContentCell.Add(display);
                 ResizeTemplateButtons(display);
             }
             else
             {
                 ContentCell.Clear();
-                foreach (TodoList list in currentCategory.lists)
+                if(mode == 2) { ContentCell.Add(CreateTitleEditor()); }
+                foreach (object item in currentCollection)
                 {
-                    TodoListDisplay display = new TodoListDisplay(list, this);
+                    dynamic display = Activator.CreateInstance(displayTypes[mode], item, this);
                     ContentCell.Add(display);
                     ResizeTemplateButtons(display);
                 }
             }
-        }
-
-        void UpdateBulletPointDisplays()
-        {
-            //TODO
-            //make it so it makes a new bullet point when the return key is pressed
         }
 
         public void SwitchToCategoriesMode()
@@ -240,7 +234,7 @@ namespace Doolist
             AddButton.IsVisible = true;
 
             ContentCell.Clear();
-            UpdateCategoryDisplays();
+            UpdateCategoryDisplays(); //still uses UpdateCategoryDisplays instead of UpdateDisplays in case the latter fails
 
             //add more stuff as more functionality comes along
         }
@@ -260,7 +254,7 @@ namespace Doolist
             AddButton.IsVisible = true;
 
             ContentCell.Clear();
-            UpdateTodoListDisplays();
+            UpdateDisplays(false);
         }
 
         public void SwitchToBulletPointsMode(TodoList todoList)
@@ -279,7 +273,7 @@ namespace Doolist
 
             ContentCell.Clear();
             ContentCell.Add(CreateTitleEditor());
-            UpdateBulletPointDisplays();
+            UpdateDisplays(false);
 
             //TODO
         }
@@ -307,16 +301,40 @@ namespace Doolist
             if(output != e.NewTextValue)
             {
                 editor.Text = output;
+                currentList.bulletPoints.Insert(0, new BulletPoint());
             }
 
             currentList.Title = output;
         }
 
-        public void DeleteBulletPoint(object sender, EventArgs e)
+        public void OnBPEditorTextChanged(object sender, TextChangedEventArgs e)
         {
-            //TODO
+            Editor editor = (Editor)sender;
+            BulletPoint point = ((BulletPointDisplay)editor.Parent).source;
+
+            char[] delimiters = { '\n', '\r', '\t' };
+            string[] output = e.NewTextValue.Split(delimiters);
+
+            point.Text = output[0];
+
+            //if output length > 1 creates a new BPDisplay for every delimiter char entered (normally will only be one unless the paste smth with more than 1)
+            for (int i = 1; i < output.Length; i++) {
+                currentList.bulletPoints.Insert(currentList.bulletPoints.IndexOf(point) + i, new BulletPoint { Text = output[i] });
+            }
         }
 
+        //TODO: fix when deleting bp when length > 1
+        public void DeleteBulletPoint(object sender, EventArgs e)
+        {
+            ImageButton btn = (ImageButton)sender;
+            BulletPointDisplay parent = btn.Parent as BulletPointDisplay;
+            currentList.bulletPoints.Remove(parent.source);
+        }
+
+        void OnBulletPointsCollectionChanged(object sender, EventArgs e)
+        {
+            UpdateDisplays(false);
+        }
     }
 
 }

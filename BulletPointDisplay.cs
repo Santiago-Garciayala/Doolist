@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace Doolist
 {
-    internal class BulletPointDisplay : Grid
+    internal class BulletPointDisplay : ContentCellDisplay
     {
-        public BulletPoint bp {  get; set; }
+        public BulletPoint source {  get; set; }
         public MainPage mainPage { get; set; }
 
-        public BulletPointDisplay(BulletPoint bp, MainPage mainPage)
+        public BulletPointDisplay(BulletPoint source, MainPage mainPage)
         {
-            this.bp = bp;
+            this.source = source;
             this.mainPage = mainPage;
 
             ColumnDefinitions = new ColumnDefinitionCollection
@@ -40,16 +40,16 @@ namespace Doolist
             {
                 BackgroundColor = Color.FromArgb("#00000000"),
                 Placeholder = "",
-                Text = bp.Text
+                Text = source.Text
             };
-            editor.TextChanged += OnEditorTextChanged;
+            editor.TextChanged += mainPage.OnBPEditorTextChanged;
             this.Add(editor, 1, 0);
 
             ImageButton trash = new ImageButton
             {
                 Source = "trash.png",
                 Padding = 5,
-                BackgroundColor = Color.FromArgb("#00000000")
+                BackgroundColor = Color.FromArgb("#00000000"),
             };
             trash.Loaded += mainPage.ResizeTemplateButton;
             trash.Pressed += mainPage.DeleteBulletPoint;
@@ -57,8 +57,14 @@ namespace Doolist
 
             Button importance = new Button
             {
+                Text = source.Importance.ToString(),
+                Padding = 5,
                 BackgroundColor = Color.FromArgb("#00000000"),
-                Text = bp.Importance.ToString(),
+                TextColor = Color.FromArgb("#FF000000"),
+                FontAttributes = FontAttributes.Bold,
+                BorderColor = Color.FromArgb("#FF000000"),
+                BorderWidth = 3,
+                CornerRadius = 30
             };
             importance.Loaded += mainPage.ResizeTemplateButton;
             importance.Pressed += DisplayImportanceMenu;
@@ -67,12 +73,7 @@ namespace Doolist
 
         private void CheckBoxCheckedChanged(object? sender, CheckedChangedEventArgs e)
         {
-            bp.IsDone = ((CheckBox)sender).IsChecked;
-        }
-
-        private void OnEditorTextChanged(object? sender, TextChangedEventArgs e)
-        {
-            bp.Text = e.NewTextValue;
+            source.IsDone = ((CheckBox)sender).IsChecked;
         }
 
         private void DisplayImportanceMenu(object? sender, EventArgs e)

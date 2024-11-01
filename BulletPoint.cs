@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Doolist
 {
-    public class BulletPoint
+    public class BulletPoint : ListableElement
     {
         public string Text { get; set; } = "";
         public int Importance { get; set; } = 1;

@@ -7,13 +7,12 @@ using System.Threading.Tasks;
 
 namespace Doolist
 {
-    internal class CategoryDisplay : Grid
+    internal class CategoryDisplay : ContentCellDisplay
     {
-        public Category category { get; set; }
         public MainPage mainPage { get; set; }
 
         public CategoryDisplay(Category cat, MainPage mainP) {
-            category = cat;
+            source = cat as Category;
             mainPage = mainP;
                 
             ColumnDefinitions = new ColumnDefinitionCollection
@@ -38,13 +37,13 @@ namespace Doolist
 
             Label titleLabel = new Label
             {
-                Text = category.title,
+                Text = source.title,
                 FontAttributes = FontAttributes.Bold,
                 FontSize = 40
             };
             this.Add(titleLabel, 0, 0);
 
-            Label countLabel = new Label { Text = category.CountDisplay };
+            Label countLabel = new Label { Text = source.CountDisplay };
             this.Add(countLabel, 0, 1);
 
             ImageButton pinned = new ImageButton
@@ -67,7 +66,7 @@ namespace Doolist
             this.Add(settingsBtn, 2, 1);
             
             TapGestureRecognizer TGR = new TapGestureRecognizer();
-            TGR.Tapped += (s, e) => { mainPage.SwitchToNotesMode(category); };
+            TGR.Tapped += (s, e) => { mainPage.SwitchToNotesMode(source); };
             this.GestureRecognizers.Add(TGR);
         }
 

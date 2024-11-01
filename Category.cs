@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Doolist
 {
-    public class Category
+    public class Category : ListableElement
     {
         public ObservableCollection<TodoList> lists { get; } = new ObservableCollection<TodoList>();
         public string title { get; set; } = "Title";

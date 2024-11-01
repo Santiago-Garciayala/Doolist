@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace Doolist
 {
-    internal class TodoListDisplay : Grid
+    internal class TodoListDisplay : ContentCellDisplay
     {
-        public TodoList list {  get; set; }
+        public TodoList source {  get; set; }
         public MainPage mainPage { get; set; }
 
-        public TodoListDisplay(TodoList list, MainPage mainPage)
+        public TodoListDisplay(TodoList source, MainPage mainPage)
         {
-            this.list = list;
+            this.source = source;
             this.mainPage = mainPage;
 
             ColumnDefinitions = new ColumnDefinitionCollection
@@ -39,7 +39,7 @@ namespace Doolist
 
             Label titleLabel = new Label
             {
-                Text = list.Title,
+                Text = source.Title,
                 FontAttributes = FontAttributes.Bold,
                 FontSize = 40
             };
@@ -69,7 +69,7 @@ namespace Doolist
             this.Add(settingsBtn, 2, 1);
 
             TapGestureRecognizer TGR = new TapGestureRecognizer();
-            TGR.Tapped += (s, e) => { mainPage.SwitchToBulletPointsMode(list); };
+            TGR.Tapped += (s, e) => { mainPage.SwitchToBulletPointsMode(source); };
             this.GestureRecognizers.Add(TGR);
         }
     }
