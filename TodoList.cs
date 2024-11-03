@@ -17,5 +17,21 @@ namespace Doolist
         {
             bulletPoints.Add(new BulletPoint());
         }
+
+        public TodoList Clone()
+        {
+            TodoList clone = new TodoList();
+            clone.bulletPoints.Clear();
+
+            foreach (BulletPoint point in bulletPoints)
+            {
+                clone.bulletPoints.Add(point.Clone());
+            }
+
+            clone.Title = Title;
+            clone.IsPinned = IsPinned;
+
+            return clone;
+        }
     }
 }

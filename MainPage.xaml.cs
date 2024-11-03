@@ -12,7 +12,7 @@ namespace Doolist
     -implement DisplayListSettings
     -implement pinning
     -implement importance button
-    -implement persistence**
+    -implement persistence** DONE
     -implement undo and redo*
     -implement search bar in mode 0
 
@@ -26,19 +26,21 @@ namespace Doolist
      */
     public partial class MainPage : ContentPage
     {
+        //mode determines what type of page is displayed cuz i didnt wanna figure out how to navigate with AppShell
+        //0 for categories, 1 for lists, 2 for specific list 
+        private int mode = 0;
         public ObservableCollection<Category> categories;
         public Category currentCategory;
         public TodoList currentList;
-
-        //determines what type of page is displayed cuz i didnt wanna figure out how to navigate with AppShell
-        //0 for categories, 1 for lists, 2 for specific list 
-        private int mode = 0; 
-
+        public int currentListIndex;
+        public List<TodoList> UndoBuffer = new List<TodoList>();
+        public int UndoCounter = 0;
 
         public MainPage()
         {
             InitializeComponent();
             LoadContent();
+            categories = new ObservableCollection<Category>(); //remove this line when persistence you go back to fixing persistence
 
             this.LayoutChanged += OnWindowChanged;
             AddButton.Pressed += OnAddButtonPressed;
@@ -113,6 +115,7 @@ namespace Doolist
                     TodoList list = new TodoList();
                     list.bulletPoints.CollectionChanged += OnBulletPointsCollectionChanged;
                     currentList = list;
+                    currentListIndex = currentCategory.lists.IndexOf(currentList);
                     currentCategory.lists.Add(list);
                     SwitchToBulletPointsMode(list);
                     SaveContent();
@@ -171,10 +174,12 @@ namespace Doolist
             //TODO
         }
 
-        void UpdateCategoryDisplays()
+        void UpdateCategoryDisplays(bool onlyPush)
         {
             //this came before UpdateDisplays was abstracted to all 3 modes and is still used as a failsafe in UpdateDisplays
+            //this comment came before i regretted doing that
 
+            /*
             bool onlyPush = true; //true if all (except the last) elements in categories list match the ones being displayed 
 
             if(categories.Count > ContentCell.Children.Count - 1)
@@ -189,6 +194,7 @@ namespace Doolist
                     onlyPush = false; 
                 }
             }
+            */
 
             if (onlyPush) 
             {
@@ -209,6 +215,66 @@ namespace Doolist
 
         }
 
+        void UpdateNoteDisplays(bool onlyPush)
+        {
+            if (onlyPush)
+            {
+                TodoListDisplay display = new TodoListDisplay(currentCategory.lists.Last(), this);
+                ContentCell.Add(display);
+                ResizeTemplateButtons(display);
+            }
+            else
+            {
+                ContentCell.Clear();
+                foreach (TodoList list in currentCategory.lists)
+                {
+                    TodoListDisplay display = new TodoListDisplay(list, this);
+                    ContentCell.Add(display);
+                    ResizeTemplateButtons(display);
+                }
+            }
+
+        }
+
+        void UpdateBulletPointDisplays(bool onlyPush)
+        {
+            if (onlyPush)
+            {
+                BulletPointDisplay display = new BulletPointDisplay(currentList.bulletPoints.Last(), this);
+                ContentCell.Add(display);
+                ResizeTemplateButtons(display);
+            }
+            else
+            {
+                ContentCell.Clear();
+                ContentCell.Add(CreateTitleEditor());
+                foreach (BulletPoint bp in currentList.bulletPoints)
+                {
+                    BulletPointDisplay display = new BulletPointDisplay(bp, this);
+                    ContentCell.Add(display);
+                    ResizeTemplateButtons(display);
+                }
+            }
+
+        }
+
+        void UpdateDisplays(bool onlyPush)
+        {
+            switch (mode)
+            {
+                case 0:
+                    UpdateCategoryDisplays(onlyPush);
+                    break;
+                case 1:
+                    UpdateNoteDisplays(onlyPush);
+                    break;
+                case 2:
+                    UpdateBulletPointDisplays(onlyPush);
+                    break;
+            }
+        }
+
+        /* I regretted doing this
         void UpdateDisplays(bool onlyPush)
         {
             //kind of ugly fucky wucky method with a lot of type shenanigans but doing it this way made it so i could abstract 3 methods into 1 ¯\_(ツ)_/¯
@@ -241,6 +307,7 @@ namespace Doolist
                 }
             }
         }
+        */
 
         public void SwitchToCategoriesMode()
         {
@@ -258,7 +325,7 @@ namespace Doolist
             AddButton.IsVisible = true;
 
             ContentCell.Clear();
-            UpdateCategoryDisplays(); //still uses UpdateCategoryDisplays instead of UpdateDisplays in case the latter fails
+            UpdateCategoryDisplays(false); 
 
             //add more stuff as more functionality comes along
         }
@@ -279,13 +346,17 @@ namespace Doolist
             AddButton.IsVisible = true;
 
             ContentCell.Clear();
-            UpdateDisplays(false);
+            UpdateNoteDisplays(false);
         }
 
         public void SwitchToBulletPointsMode(TodoList todoList)
         {
             mode = 2;
             currentList = todoList;
+            currentListIndex = currentCategory.lists.IndexOf(currentList);
+            UndoBuffer.Clear();
+            UndoBuffer.Add(currentList.Clone());
+            UndoCounter = 0;
             SaveContent();
 
             BackButton.IsEnabled = true;
@@ -299,7 +370,7 @@ namespace Doolist
 
             ContentCell.Clear();
             ContentCell.Add(CreateTitleEditor());
-            UpdateDisplays(false);
+            UpdateBulletPointDisplays(false);
         }
 
         Editor CreateTitleEditor()
@@ -313,7 +384,7 @@ namespace Doolist
             };
 
             editor.TextChanged += OnTitleEditorTextChanged;
-            editor.Completed += (s, e) => { SaveContent(); };
+            editor.Completed += OnTitleEditorCompleted;
 
             return editor;
         }
@@ -332,6 +403,12 @@ namespace Doolist
             currentList.Title = output;
         }
 
+        void OnTitleEditorCompleted(object sender, EventArgs e) {
+            SaveContent();
+            UndoBuffer.Add(currentList.Clone());
+            ++UndoCounter;
+        }
+
         public void OnBPEditorTextChanged(object sender, TextChangedEventArgs e)
         {
             Editor editor = (Editor)sender;
@@ -346,6 +423,20 @@ namespace Doolist
             for (int i = 1; i < output.Length; i++) {
                 currentList.bulletPoints.Insert(currentList.bulletPoints.IndexOf(point) + i, new BulletPoint { Text = output[i] });
             }
+
+            //clear any possible redos beyond the current state from UndoBuffer
+            while(UndoCounter + 1 < UndoBuffer.Count)
+            {
+                UndoBuffer.RemoveAt(UndoCounter + 1);
+            }
+
+        }
+
+        public void OnBPEditorCompleted(object sender, EventArgs e)
+        {
+            SaveContent();
+            UndoBuffer.Add(currentList.Clone());
+            ++UndoCounter;
         }
 
         public void DeleteBulletPoint(object sender, EventArgs e)
@@ -361,8 +452,9 @@ namespace Doolist
             UpdateDisplays(false);
         }
 
-        public void SaveContent()
+        public void SaveContent() //this is probably breaking it, FIX
         {
+            /*
             string data = JsonSerializer.Serialize(categories);
             string path = Path.Combine(FileSystem.Current.AppDataDirectory, "content.json");
 
@@ -371,16 +463,17 @@ namespace Doolist
                 using (StreamWriter writer = new StreamWriter(path)) { 
                     writer.Write(data); 
                 }
-            }catch(IOException e)
+            }catch(Exception e)
             {
                 DisplayAlert("Failed to save content", e.Message, "OK");
             }
+            */
         }
 
         private void LoadContent() 
         {
             string path = Path.Combine(FileSystem.Current.AppDataDirectory, "content.json");
-            Debug.WriteLine(path);
+            //Debug.WriteLine(path);
 
             try
             {
@@ -388,7 +481,7 @@ namespace Doolist
                     using(StreamReader reader = new StreamReader(path))
                     {
                         string contentJson = reader.ReadToEnd();
-                        Debug.Write(contentJson);
+                        //Debug.Write(contentJson);
                         categories = JsonSerializer.Deserialize<ObservableCollection<Category>>(contentJson);
                     }
                 }
@@ -401,6 +494,30 @@ namespace Doolist
             {
                 categories = new ObservableCollection<Category>();
                 DisplayAlert("Failed to load content due to " + e.GetType(), e.Message, "OK");
+            }
+        }
+
+        private void UndoButton_Clicked(object sender, EventArgs e) //these 2 not really working properly yet but hey they dont crash the program anymore
+        {
+            if((UndoCounter - 1) >= 0)
+            {
+                UndoCounter--; //important to have this at the beginning
+                currentCategory.lists.Insert(currentListIndex, UndoBuffer[UndoCounter]);
+                currentCategory.lists.Remove(currentList);
+                currentList = UndoBuffer[UndoCounter];
+                UpdateBulletPointDisplays(false);
+            }
+        }
+
+        private void RedoButton_Clicked(object sender, EventArgs e)
+        {
+            if ((UndoCounter - 1) > UndoBuffer.Count)
+            {
+                UndoCounter++; //important to have this at the beginning
+                currentCategory.lists.Insert(currentListIndex, UndoBuffer[UndoCounter]);
+                currentCategory.lists.Remove(currentList);
+                currentList = UndoBuffer[UndoCounter];
+                UpdateBulletPointDisplays(false);
             }
         }
     }

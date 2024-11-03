@@ -11,5 +11,15 @@ namespace Doolist
         public string Text { get; set; } = "";
         public int Importance { get; set; } = 1;
         public bool IsDone { get; set; } = false;
+
+        public BulletPoint Clone()
+        {
+            BulletPoint clone = new BulletPoint();
+            clone.Text = Text;
+            clone.Importance = Importance;
+            clone.IsDone = IsDone;
+
+            return clone;
+        }
     }
 }

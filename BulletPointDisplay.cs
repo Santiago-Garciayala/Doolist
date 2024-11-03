@@ -43,7 +43,7 @@ namespace Doolist
                 Text = source.Text
             };
             editor.TextChanged += mainPage.OnBPEditorTextChanged;
-            editor.Completed += (s, e) => { mainPage.SaveContent(); };
+            editor.Completed += mainPage.OnBPEditorCompleted;
             this.Add(editor, 1, 0);
 
             ImageButton trash = new ImageButton
