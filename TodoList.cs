@@ -9,7 +9,7 @@ namespace Doolist
 {
     public class TodoList : ListableElement
     {
-        public ObservableCollection<BulletPoint> bulletPoints { get; } = new ObservableCollection<BulletPoint>();
+        public ObservableCollection<BulletPoint> bulletPoints { get; set; } = new ObservableCollection<BulletPoint>();
         public string Title { get; set; } = "";
         public bool IsPinned { get; set; } = false;
 

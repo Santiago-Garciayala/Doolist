@@ -32,7 +32,7 @@ namespace Doolist
             BackgroundColor = Color.FromArgb("#FFF0F8FF"); //AliceBlue
 
             //resize this later
-            CheckBox checkBox = new CheckBox();
+            CheckBox checkBox = new CheckBox { IsChecked = source.IsDone };
             checkBox.CheckedChanged += CheckBoxCheckedChanged;
             this.Add(checkBox, 0, 0);
 
@@ -43,6 +43,7 @@ namespace Doolist
                 Text = source.Text
             };
             editor.TextChanged += mainPage.OnBPEditorTextChanged;
+            editor.Completed += (s, e) => { mainPage.SaveContent(); };
             this.Add(editor, 1, 0);
 
             ImageButton trash = new ImageButton

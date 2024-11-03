@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Text.Json;
 
 namespace Doolist
 {
@@ -24,7 +26,7 @@ namespace Doolist
      */
     public partial class MainPage : ContentPage
     {
-        public ObservableCollection<Category> categories = new ObservableCollection<Category>();
+        public ObservableCollection<Category> categories;
         public Category currentCategory;
         public TodoList currentList;
 
@@ -36,13 +38,13 @@ namespace Doolist
         public MainPage()
         {
             InitializeComponent();
+            LoadContent();
 
             this.LayoutChanged += OnWindowChanged;
             AddButton.Pressed += OnAddButtonPressed;
             BackButton.Pressed += OnBackButtonPressed;
             categories.CollectionChanged += (s, e) => { UpdateDisplays(false); };
 
-            categories.Add(new Category("Test"));
             SwitchToCategoriesMode();
         }
 
@@ -105,6 +107,7 @@ namespace Doolist
                     if (name == null) { name = "Category"; };
                     Category cat = new Category(name);
                     categories.Add(cat);
+                    SaveContent();
                     break;
                 case 1:
                     TodoList list = new TodoList();
@@ -112,6 +115,7 @@ namespace Doolist
                     currentList = list;
                     currentCategory.lists.Add(list);
                     SwitchToBulletPointsMode(list);
+                    SaveContent();
                     break;
                 default:
                     DisplayAlert("Alert", "You shouldnt be able to see this button", "OK");
@@ -242,6 +246,8 @@ namespace Doolist
         {
             mode = 0;
 
+            SaveContent();
+
             BackButton.IsEnabled = false;
             BackButton.IsVisible = false;
             RedoButton.IsEnabled = false;
@@ -261,6 +267,7 @@ namespace Doolist
         {
             mode = 1;
             currentCategory = category;
+            SaveContent();
 
             BackButton.IsEnabled = true;
             BackButton.IsVisible = true;
@@ -279,6 +286,7 @@ namespace Doolist
         {
             mode = 2;
             currentList = todoList;
+            SaveContent();
 
             BackButton.IsEnabled = true;
             BackButton.IsVisible = true;
@@ -305,6 +313,7 @@ namespace Doolist
             };
 
             editor.TextChanged += OnTitleEditorTextChanged;
+            editor.Completed += (s, e) => { SaveContent(); };
 
             return editor;
         }
@@ -350,6 +359,49 @@ namespace Doolist
         void OnBulletPointsCollectionChanged(object sender, EventArgs e)
         {
             UpdateDisplays(false);
+        }
+
+        public void SaveContent()
+        {
+            string data = JsonSerializer.Serialize(categories);
+            string path = Path.Combine(FileSystem.Current.AppDataDirectory, "content.json");
+
+            try
+            {
+                using (StreamWriter writer = new StreamWriter(path)) { 
+                    writer.Write(data); 
+                }
+            }catch(IOException e)
+            {
+                DisplayAlert("Failed to save content", e.Message, "OK");
+            }
+        }
+
+        private void LoadContent() 
+        {
+            string path = Path.Combine(FileSystem.Current.AppDataDirectory, "content.json");
+            Debug.WriteLine(path);
+
+            try
+            {
+                if (File.Exists(path)) {
+                    using(StreamReader reader = new StreamReader(path))
+                    {
+                        string contentJson = reader.ReadToEnd();
+                        Debug.Write(contentJson);
+                        categories = JsonSerializer.Deserialize<ObservableCollection<Category>>(contentJson);
+                    }
+                }
+                else
+                {
+                    categories = new ObservableCollection<Category>();
+                    return;
+                }
+            }catch(Exception e)
+            {
+                categories = new ObservableCollection<Category>();
+                DisplayAlert("Failed to load content due to " + e.GetType(), e.Message, "OK");
+            }
         }
     }
 
