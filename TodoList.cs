@@ -16,6 +16,7 @@ namespace Doolist
         public TodoList()
         {
             bulletPoints.Add(new BulletPoint());
+            bulletPoints.CollectionChanged += MainPage.MainPageInstance.OnBulletPointsCollectionChanged;
         }
 
         public TodoList Clone()

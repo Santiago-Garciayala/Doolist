@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Doolist
 {
@@ -35,12 +36,16 @@ namespace Doolist
         public int currentListIndex;
         public List<TodoList> UndoBuffer = new List<TodoList>();
         public int UndoCounter = 0;
+        //this is done so i dont have to pass a reference to mainPage to the TodoList constructor because that breaks everything for some reason
+        public static MainPage MainPageInstance { get; private set; }
+
+
 
         public MainPage()
         {
+            MainPageInstance = this;
             InitializeComponent();
             LoadContent();
-            categories = new ObservableCollection<Category>(); //remove this line when persistence you go back to fixing persistence
 
             this.LayoutChanged += OnWindowChanged;
             AddButton.Pressed += OnAddButtonPressed;
@@ -113,7 +118,6 @@ namespace Doolist
                     break;
                 case 1:
                     TodoList list = new TodoList();
-                    list.bulletPoints.CollectionChanged += OnBulletPointsCollectionChanged;
                     currentList = list;
                     currentListIndex = currentCategory.lists.IndexOf(currentList);
                     currentCategory.lists.Add(list);
@@ -447,15 +451,17 @@ namespace Doolist
         }
 
         //TODO: pass in arg so onlyPush can be true if it just adds one
-        void OnBulletPointsCollectionChanged(object sender, EventArgs e)
+        public void OnBulletPointsCollectionChanged(object sender, EventArgs e)
         {
             UpdateDisplays(false);
         }
 
-        public void SaveContent() //this is probably breaking it, FIX
+        public void SaveContent() 
         {
-            /*
-            string data = JsonSerializer.Serialize(categories);
+            JsonSerializerOptions options = new JsonSerializerOptions { 
+                NumberHandling =  JsonNumberHandling.AllowNamedFloatingPointLiterals,
+            };
+            string data = JsonSerializer.Serialize(categories, options);
             string path = Path.Combine(FileSystem.Current.AppDataDirectory, "content.json");
 
             try
@@ -467,7 +473,7 @@ namespace Doolist
             {
                 DisplayAlert("Failed to save content", e.Message, "OK");
             }
-            */
+            
         }
 
         private void LoadContent() 
