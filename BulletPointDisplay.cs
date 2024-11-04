@@ -70,6 +70,8 @@ namespace Doolist
             importance.Loaded += mainPage.ResizeTemplateButton;
             importance.Pressed += DisplayImportanceMenu;
             this.Add(importance, 3, 0);
+
+            this.Focus();
         }
 
         private void CheckBoxCheckedChanged(object? sender, CheckedChangedEventArgs e)

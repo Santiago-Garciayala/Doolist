@@ -17,6 +17,7 @@ namespace Doolist
     -implement undo and redo*
     -implement search bar in mode 0
 
+    -fix UpdateBulletPointDisplays not actually updating in time when on a note loaded from user data*
     -fix plus button position
     -fix positioning of template buttons android
 
@@ -423,7 +424,7 @@ namespace Doolist
 
             point.Text = output[0];
 
-            //if output length > 1 creates a new BPDisplay for every delimiter char entered (normally will only be one unless the paste smth with more than 1)
+            //if output length > 1 creates a new BPDisplay for every delimiter char entered (normally will only be one unless they paste smth with more than 1)
             for (int i = 1; i < output.Length; i++) {
                 currentList.bulletPoints.Insert(currentList.bulletPoints.IndexOf(point) + i, new BulletPoint { Text = output[i] });
             }
@@ -459,7 +460,7 @@ namespace Doolist
         public void SaveContent() 
         {
             JsonSerializerOptions options = new JsonSerializerOptions { 
-                NumberHandling =  JsonNumberHandling.AllowNamedFloatingPointLiterals,
+                NumberHandling =  JsonNumberHandling.AllowNamedFloatingPointLiterals, //let it be known that IntelliJ suggested this and it fixed it
             };
             string data = JsonSerializer.Serialize(categories, options);
             string path = Path.Combine(FileSystem.Current.AppDataDirectory, "content.json");

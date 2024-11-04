@@ -12,7 +12,7 @@ namespace Doolist
         public MainPage mainPage { get; set; }
 
         public CategoryDisplay(Category cat, MainPage mainP) {
-            source = cat as Category;
+            source = cat;
             mainPage = mainP;
                 
             ColumnDefinitions = new ColumnDefinitionCollection
