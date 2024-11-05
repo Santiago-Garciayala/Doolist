@@ -515,7 +515,7 @@ namespace Doolist
             }
         }
 
-        private void UndoButton_Clicked(object sender, EventArgs e) //these 2 not really working properly yet but hey they dont crash the program anymore
+        private void UndoButton_Clicked(object sender, EventArgs e) //TODO: make it so this keeps pin button state
         {
             if((UndoCounter - 1) >= 0)
             {
