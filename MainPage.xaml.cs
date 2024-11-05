@@ -14,7 +14,7 @@ namespace Doolist
     -implement pinning
     -implement importance button
     -implement persistence** DONE
-    -implement undo and redo*
+    -implement undo and redo* DONE
     -implement search bar in mode 0
 
     -fix UpdateBulletPointDisplays not actually updating in time when on a note loaded from user data*
@@ -146,6 +146,16 @@ namespace Doolist
                     DisplayAlert("Alert", "You shouldnt be able to see this button", "OK");
                     break;
             }
+        }
+
+        public void OnPinButtonClicked(object sender, EventArgs e)
+        {
+            ImageButton pinBtn = (ImageButton)sender;
+            ContentCellDisplay parent = (ContentCellDisplay)pinBtn.Parent;
+            ListableElement source = parent.source;
+
+            source.IsPinned = source.IsPinned ? false : true;
+            pinBtn.Opacity = source.IsPinned ? 1 : 0.1;
         }
 
         public void ResizeTemplateButton(object sender, EventArgs e)
@@ -512,6 +522,7 @@ namespace Doolist
                 UndoCounter--; //important to have this at the beginning
                 currentList = UndoBuffer[UndoCounter].Clone();
                 UpdateBulletPointDisplays(false);
+                SaveContent();
             }
         }
 
@@ -522,6 +533,7 @@ namespace Doolist
                 UndoCounter++; //important to have this at the beginning
                 currentList = UndoBuffer[UndoCounter].Clone();
                 UpdateBulletPointDisplays(false);
+                SaveContent();
             }
         }
     }

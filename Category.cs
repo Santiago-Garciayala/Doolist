@@ -11,7 +11,6 @@ namespace Doolist
     {
         public ObservableCollection<TodoList> lists { get; set; } = new ObservableCollection<TodoList>();
         public string title { get; set; } = "Title";
-        public bool IsPinned { get; set; } = false;
         public string CountDisplay { get; set; }
 
 

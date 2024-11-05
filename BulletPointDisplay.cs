@@ -8,18 +8,18 @@ namespace Doolist
 {
     internal class BulletPointDisplay : ContentCellDisplay
     {
-        public BulletPoint source {  get; set; }
         public MainPage mainPage { get; set; }
 
-        public BulletPointDisplay(BulletPoint source, MainPage mainPage)
+        public BulletPointDisplay(BulletPoint src, MainPage mainP)
         {
-            this.source = source;
-            this.mainPage = mainPage;
+            this.source = src;
+            this.mainPage = mainP;
 
             ColumnDefinitions = new ColumnDefinitionCollection
             {
                 new ColumnDefinition{ Width = new GridLength(1, GridUnitType.Auto) },
                 new ColumnDefinition{ Width = new GridLength(1, GridUnitType.Star) },
+                new ColumnDefinition{ Width = new GridLength(1, GridUnitType.Auto) },
                 new ColumnDefinition{ Width = new GridLength(1, GridUnitType.Auto) },
                 new ColumnDefinition{ Width = new GridLength(1, GridUnitType.Auto) }
             };
@@ -70,6 +70,17 @@ namespace Doolist
             importance.Loaded += mainPage.ResizeTemplateButton;
             importance.Pressed += DisplayImportanceMenu;
             this.Add(importance, 3, 0);
+
+            ImageButton pinned = new ImageButton
+            {
+                Source = "pin.png",
+                Opacity = source.IsPinned ? 1 : 0.1,
+                Padding = 5,
+                BackgroundColor = Color.FromArgb("#00000000")
+            };
+            pinned.Loaded += mainPage.ResizeTemplateButton;
+            pinned.Clicked += mainPage.OnPinButtonClicked;
+            this.Add(pinned, 4, 0);
 
             this.Focus();
         }

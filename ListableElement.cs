@@ -8,6 +8,6 @@ namespace Doolist
 {
     public class ListableElement
     {
-
+        public bool IsPinned { get; set; } = false;
     }
 }

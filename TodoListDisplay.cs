@@ -9,13 +9,12 @@ namespace Doolist
 {
     internal class TodoListDisplay : ContentCellDisplay
     {
-        public TodoList source {  get; set; }
         public MainPage mainPage { get; set; }
 
-        public TodoListDisplay(TodoList source, MainPage mainPage)
+        public TodoListDisplay(TodoList src, MainPage mainP)
         {
-            this.source = source;
-            this.mainPage = mainPage;
+            this.source = src;
+            this.mainPage = mainP;
 
             ColumnDefinitions = new ColumnDefinitionCollection
                 {
@@ -52,10 +51,12 @@ namespace Doolist
             ImageButton pinned = new ImageButton
             {
                 Source = "pin.png",
+                Opacity = source.IsPinned ? 1 : 0.1,
                 Padding = 5,
                 BackgroundColor = Color.FromArgb("#00000000")
             };
             pinned.Loaded += mainPage.ResizeTemplateButton;
+            pinned.Clicked += mainPage.OnPinButtonClicked;
             this.Add(pinned, 2, 0);
 
             ImageButton settingsBtn = new ImageButton
