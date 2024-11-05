@@ -152,16 +152,16 @@ namespace Doolist
         {
             VisualElement btn = (VisualElement)sender;
 
-            double height = ((Grid)btn.Parent).Height;
-            double width = ((Grid)btn.Parent).Width;
+            double height = ((ContentCellDisplay)btn.Parent).Height;
+            double width = ((ContentCellDisplay)btn.Parent).Width;
 
             btn.HeightRequest = height * .04;
             btn.WidthRequest = height * .04;
         }
 
-        void ResizeTemplateButtons(Grid grid)
+        void ResizeTemplateButtons(ContentCellDisplay display)
         {
-            foreach (var child in grid.Children)
+            foreach (var child in display.Children)
             {
                 if(child.GetType() == typeof(ImageButton) || child.GetType() == typeof(Button))
                 {
@@ -429,12 +429,13 @@ namespace Doolist
                 currentList.bulletPoints.Insert(currentList.bulletPoints.IndexOf(point) + i, new BulletPoint { Text = output[i] });
             }
 
+            
             //clear any possible redos beyond the current state from UndoBuffer
             while(UndoCounter + 1 < UndoBuffer.Count)
             {
                 UndoBuffer.RemoveAt(UndoCounter + 1);
             }
-
+            
         }
 
         public void OnBPEditorCompleted(object sender, EventArgs e)
@@ -509,21 +510,17 @@ namespace Doolist
             if((UndoCounter - 1) >= 0)
             {
                 UndoCounter--; //important to have this at the beginning
-                currentCategory.lists.Insert(currentListIndex, UndoBuffer[UndoCounter]);
-                currentCategory.lists.Remove(currentList);
-                currentList = UndoBuffer[UndoCounter];
+                currentList = UndoBuffer[UndoCounter].Clone();
                 UpdateBulletPointDisplays(false);
             }
         }
 
         private void RedoButton_Clicked(object sender, EventArgs e)
         {
-            if ((UndoCounter - 1) > UndoBuffer.Count)
+            if ((UndoCounter + 1) < UndoBuffer.Count)
             {
                 UndoCounter++; //important to have this at the beginning
-                currentCategory.lists.Insert(currentListIndex, UndoBuffer[UndoCounter]);
-                currentCategory.lists.Remove(currentList);
-                currentList = UndoBuffer[UndoCounter];
+                currentList = UndoBuffer[UndoCounter].Clone();
                 UpdateBulletPointDisplays(false);
             }
         }
