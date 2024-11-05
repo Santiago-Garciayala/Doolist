@@ -2,7 +2,8 @@ namespace Doolist;
 
 public partial class ImportancePopup : Mopups.Pages.PopupPage
 {
-	public BulletPoint bp { get; set; }
+	BulletPoint bp { get; set; }
+	bool initialized { get; set; } = false;
 
 	public ImportancePopup(BulletPoint point)
 	{
@@ -11,14 +12,19 @@ public partial class ImportancePopup : Mopups.Pages.PopupPage
 		bp = point;
 		importanceSlider.Value = bp.Importance;
         importanceLabel.Text = bp.Importance.ToString();
+
+		initialized = true;
     }
 
 
     private void importanceSlider_ValueChanged(object sender, ValueChangedEventArgs e)
     {
-		Slider slider = (Slider)sender;
+		if (initialized)
+		{
+			Slider slider = (Slider)sender;
 
-		bp.Importance = (int)Math.Round(slider.Value); //why is it null???????? FIX
-		importanceLabel.Text = bp.Importance.ToString();
+			bp.Importance = (int)Math.Round(slider.Value);
+			importanceLabel.Text = bp.Importance.ToString();
+		}
     }
 }

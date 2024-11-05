@@ -94,7 +94,8 @@ namespace Doolist
         private void DisplayImportanceMenu(object? sender, EventArgs e)
         {
             BulletPoint point = ((BulletPointDisplay)((Button)sender).Parent).source; //forgive me for this line
-            MopupService.Instance.PushAsync(new ImportancePopup(point));
+            //BulletPoint.importanceClickedInstance = point; //need to set this so ImportancePopup can access the instance since passing it to the constructor doesnt work - edit: not necessary
+            MopupService.Instance.PushAsync(new ImportancePopup(point)); 
         }
     }
 }

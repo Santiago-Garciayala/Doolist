@@ -11,6 +11,7 @@ namespace Doolist
         public string Text { get; set; } = "";
         public int Importance { get; set; } = 1;
         public bool IsDone { get; set; } = false;
+        //public static BulletPoint importanceClickedInstance { get; set; }
 
         public BulletPoint Clone()
         {
