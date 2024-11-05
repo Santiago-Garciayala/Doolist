@@ -134,6 +134,8 @@ namespace Doolist
 
         void OnBackButtonPressed(object sender, EventArgs e)
         {
+            SaveContent();
+
             switch (mode)
             {
                 case 2:
@@ -147,6 +149,15 @@ namespace Doolist
                     break;
             }
         }
+        public void DeleteBulletPoint(object sender, EventArgs e)
+        {
+            ImageButton btn = (ImageButton)sender;
+            BulletPointDisplay parent = btn.Parent as BulletPointDisplay;
+            currentList.bulletPoints.Remove(parent.source);
+
+            SaveContent();
+            AddCurrentStateToUndoBuffer();
+        }
 
         public void OnPinButtonClicked(object sender, EventArgs e)
         {
@@ -156,6 +167,9 @@ namespace Doolist
 
             source.IsPinned = source.IsPinned ? false : true;
             pinBtn.Opacity = source.IsPinned ? 1 : 0.1;
+
+            SaveContent();
+            AddCurrentStateToUndoBuffer();
         }
 
         public void ResizeTemplateButton(object sender, EventArgs e)
@@ -451,15 +465,7 @@ namespace Doolist
         public void OnBPEditorCompleted(object sender, EventArgs e)
         {
             SaveContent();
-            UndoBuffer.Add(currentList.Clone());
-            ++UndoCounter;
-        }
-
-        public void DeleteBulletPoint(object sender, EventArgs e)
-        {
-            ImageButton btn = (ImageButton)sender;
-            BulletPointDisplay parent = btn.Parent as BulletPointDisplay;
-            currentList.bulletPoints.Remove(parent.source);
+            AddCurrentStateToUndoBuffer();
         }
 
         //TODO: pass in arg so onlyPush can be true if it just adds one
@@ -521,6 +527,7 @@ namespace Doolist
             {
                 UndoCounter--; //important to have this at the beginning
                 currentList = UndoBuffer[UndoCounter].Clone();
+                currentCategory.lists[currentListIndex] = currentList; //this is important, makes it so everything is saved after undoing
                 UpdateBulletPointDisplays(false);
                 SaveContent();
             }
@@ -532,9 +539,16 @@ namespace Doolist
             {
                 UndoCounter++; //important to have this at the beginning
                 currentList = UndoBuffer[UndoCounter].Clone();
+                currentCategory.lists[currentListIndex] = currentList;
                 UpdateBulletPointDisplays(false);
                 SaveContent();
             }
+        }
+
+        void AddCurrentStateToUndoBuffer()
+        {
+            UndoBuffer.Add(currentList.Clone());
+            ++UndoCounter;
         }
     }
 

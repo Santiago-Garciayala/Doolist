@@ -18,6 +18,7 @@ namespace Doolist
             clone.Text = Text;
             clone.Importance = Importance;
             clone.IsDone = IsDone;
+            clone.IsPinned = IsPinned;
 
             return clone;
         }
