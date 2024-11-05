@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Mopups.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -92,7 +93,8 @@ namespace Doolist
 
         private void DisplayImportanceMenu(object? sender, EventArgs e)
         {
-            //TODO
+            BulletPoint point = ((BulletPointDisplay)((Button)sender).Parent).source; //forgive me for this line
+            MopupService.Instance.PushAsync(new ImportancePopup(point));
         }
     }
 }

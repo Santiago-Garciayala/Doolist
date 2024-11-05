@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<mopups:PopupPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:mopups="clr-namespace:Mopups.Pages;assembly=Mopups"
+             x:Class="Doolist.ImportancePopup"
+             Title="ImportancePopup"
+                  BackgroundColor="#88000000">
+    <VerticalStackLayout WidthRequest="300" HeightRequest="200" BackgroundColor="LightGrey" VerticalOptions="CenterAndExpand">
+        <Label Text="Set the importance for this task:" 
+               FontSize="16" 
+               HorizontalOptions="CenterAndExpand" 
+               HorizontalTextAlignment="Center"></Label>
+        <Slider
+            x:Name="importanceSlider"
+            ValueChanged="importanceSlider_ValueChanged"
+            Maximum="10"
+            Minimum="1"></Slider>
+        <Label 
+            x:Name="importanceLabel"
+            FontSize="16"
+            HorizontalOptions="CenterAndExpand" 
+            HorizontalTextAlignment="Center"></Label>
+    </VerticalStackLayout>
+</mopups:PopupPage>
