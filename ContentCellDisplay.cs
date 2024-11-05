@@ -9,5 +9,11 @@ namespace Doolist
     public class ContentCellDisplay : Grid
     {
         public dynamic source { get; set; }
+
+        public ContentCellDisplay()
+        {
+            HorizontalOptions = LayoutOptions.FillAndExpand;
+            WidthRequest = MainPage.MainPageInstance.Width;
+        }
     }
 }

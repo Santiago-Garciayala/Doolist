@@ -104,6 +104,7 @@ namespace Doolist
             double width = this.Width;
 
             ContentScrollView.HeightRequest = height * .95;
+            ContentScrollView.WidthRequest = width;
         }
 
         async void OnAddButtonPressed(object sender, EventArgs e)
@@ -168,8 +169,11 @@ namespace Doolist
             source.IsPinned = source.IsPinned ? false : true;
             pinBtn.Opacity = source.IsPinned ? 1 : 0.1;
 
+            SortByPinned();
+
             SaveContent();
-            AddCurrentStateToUndoBuffer();
+            if(mode == 2)
+                AddCurrentStateToUndoBuffer();
         }
 
         public void ResizeTemplateButton(object sender, EventArgs e)
@@ -545,10 +549,33 @@ namespace Doolist
             }
         }
 
-        void AddCurrentStateToUndoBuffer()
+        public void AddCurrentStateToUndoBuffer()
         {
             UndoBuffer.Add(currentList.Clone());
             ++UndoCounter;
+        }
+
+        void SortByPinned()
+        {
+            int pinnedAtTopEndIndex = 0;
+            dynamic[] collections = { categories, currentCategory?.lists, currentList?.bulletPoints };
+
+            foreach (ListableElement item in collections[mode])
+            {
+                if (!item.IsPinned)
+                    break;
+                ++pinnedAtTopEndIndex;
+            }
+
+            for (int i = pinnedAtTopEndIndex; i < collections[mode].Count; ++i)
+            {
+                if (collections[mode][i].IsPinned)
+                {
+                    collections[mode].Move(i, pinnedAtTopEndIndex); //this method is specific to ObservableCollection so im in luck
+                    ++pinnedAtTopEndIndex;
+                }
+            }
+
         }
     }
 

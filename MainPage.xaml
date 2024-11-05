@@ -14,7 +14,7 @@
         </Grid>
         <VerticalStackLayout>
             <ScrollView x:Name="ContentScrollView" VerticalOptions="FillAndExpand">
-                <Grid x:Name="ContentGrid" ColumnDefinitions="*,Auto,Auto" RowDefinitions="*,Auto,Auto" ColumnSpacing="3" RowSpacing="3">
+                <Grid x:Name="ContentGrid" ColumnDefinitions="*,Auto,Auto" RowDefinitions="*,Auto,Auto" ColumnSpacing="3" RowSpacing="3" HorizontalOptions="FillAndExpand">
                     <!--
                         <CollectionView
                             x:Name="CategoriesView"

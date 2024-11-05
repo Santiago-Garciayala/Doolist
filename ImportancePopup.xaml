@@ -5,7 +5,12 @@
              x:Class="Doolist.ImportancePopup"
              Title="ImportancePopup"
                   BackgroundColor="#88000000">
-    <VerticalStackLayout WidthRequest="300" HeightRequest="200" BackgroundColor="LightGrey" VerticalOptions="CenterAndExpand">
+    <VerticalStackLayout 
+        WidthRequest="300" 
+        HeightRequest="200"
+        BackgroundColor="LightGrey" 
+        VerticalOptions="CenterAndExpand"
+        Padding="10">
         <Label Text="Set the importance for this task:" 
                FontSize="16" 
                HorizontalOptions="CenterAndExpand" 
