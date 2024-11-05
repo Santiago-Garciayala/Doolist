@@ -203,7 +203,7 @@ namespace Doolist
             //TODO
         }
 
-        void UpdateCategoryDisplays(bool onlyPush)
+        public void UpdateCategoryDisplays(bool onlyPush)
         {
             //this came before UpdateDisplays was abstracted to all 3 modes and is still used as a failsafe in UpdateDisplays
             //this comment came before i regretted doing that
@@ -244,7 +244,7 @@ namespace Doolist
 
         }
 
-        void UpdateNoteDisplays(bool onlyPush)
+        public void UpdateNoteDisplays(bool onlyPush)
         {
             if (onlyPush)
             {
@@ -265,7 +265,7 @@ namespace Doolist
 
         }
 
-        void UpdateBulletPointDisplays(bool onlyPush)
+        public void UpdateBulletPointDisplays(bool onlyPush)
         {
             if (onlyPush)
             {
@@ -287,7 +287,7 @@ namespace Doolist
 
         }
 
-        void UpdateDisplays(bool onlyPush)
+        public void UpdateDisplays(bool onlyPush)
         {
             switch (mode)
             {

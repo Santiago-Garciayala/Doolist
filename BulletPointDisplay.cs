@@ -91,11 +91,11 @@ namespace Doolist
             source.IsDone = ((CheckBox)sender).IsChecked;
         }
 
-        private void DisplayImportanceMenu(object? sender, EventArgs e)
+        private async void DisplayImportanceMenu(object? sender, EventArgs e)
         {
             BulletPoint point = ((BulletPointDisplay)((Button)sender).Parent).source; //forgive me for this line
             //BulletPoint.importanceClickedInstance = point; //need to set this so ImportancePopup can access the instance since passing it to the constructor doesnt work - edit: not necessary
-            MopupService.Instance.PushAsync(new ImportancePopup(point)); 
+            await MopupService.Instance.PushAsync(new ImportancePopup(point));
         }
     }
 }

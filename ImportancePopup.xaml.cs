@@ -13,7 +13,9 @@ public partial class ImportancePopup : Mopups.Pages.PopupPage
 		importanceSlider.Value = bp.Importance;
         importanceLabel.Text = bp.Importance.ToString();
 
-		initialized = true;
+		this.BackgroundClicked += (s, e) => { MainPage.MainPageInstance.UpdateBulletPointDisplays(false); };
+
+        initialized = true;
     }
 
 
