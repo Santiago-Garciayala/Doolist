@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using Mopups.Services;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -11,8 +12,8 @@ namespace Doolist
     -implement preview of notes in mode 1
     -implement DisplayCategorySettings
     -implement DisplayListSettings
-    -implement pinning
-    -implement importance button
+    -implement pinning DONE
+    -implement importance button DONE
     -implement persistence** DONE
     -implement undo and redo* DONE
     -implement search bar in mode 0
@@ -51,6 +52,7 @@ namespace Doolist
             this.LayoutChanged += OnWindowChanged;
             AddButton.Pressed += OnAddButtonPressed;
             BackButton.Pressed += OnBackButtonPressed;
+            SettingsButton.Pressed += DisplaySettings;
             categories.CollectionChanged += (s, e) => { UpdateDisplays(false); };
 
             SwitchToCategoriesMode();
@@ -197,9 +199,14 @@ namespace Doolist
                 }
             }
         }
+
+        public void DisplaySettings(object sender, EventArgs e)
+        {
+            MopupService.Instance.PushAsync(new CategorySettings()); //change this later, testing android
+        }
         public void DisplayCategorySettings(object sender, EventArgs e)
         {
-            //TODO
+            MopupService.Instance.PushAsync(new CategorySettings());
         }
 
         public void DisplayListSettings(object sender, EventArgs e)

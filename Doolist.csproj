@@ -76,6 +76,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="CategorySettings.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="ImportancePopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

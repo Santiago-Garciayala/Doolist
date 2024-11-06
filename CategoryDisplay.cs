@@ -14,7 +14,7 @@ namespace Doolist
         public CategoryDisplay(Category src, MainPage mainP) {
             source = src;
             mainPage = mainP;
-                
+
             ColumnDefinitions = new ColumnDefinitionCollection
                 {
                     new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) },
@@ -46,23 +46,25 @@ namespace Doolist
             Label countLabel = new Label { Text = source.CountDisplay };
             this.Add(countLabel, 0, 1);
 
+            //I FIGURED OUT WHY THIS DOESNT WORK ON ADROID SO TODO: MAKE THEM ALL FAKE IMAGE BUTTONS (by turning them into Images and adding a TGR)
             ImageButton pinned = new ImageButton
             {
                 Source = "pin.png",
                 Opacity = source.IsPinned ? 1 : 0.1,
                 Padding = 5,
-                BackgroundColor = Color.FromArgb("#00000000")
+                BackgroundColor = Color.FromArgb("#00000000"),
+                HorizontalOptions = LayoutOptions.Start
             };
             pinned.Loaded += mainPage.ResizeTemplateButton;
             pinned.Clicked += mainPage.OnPinButtonClicked;
             this.Add(pinned, 2, 0);
 
-            ImageButton settingsBtn = new ImageButton
-            {
-                Source = "threedots.png",
-                Padding = 5,
-                BackgroundColor = Color.FromArgb("#00000000")
-            };
+            ImageButton settingsBtn = new ImageButton();
+            settingsBtn.Source = "threedots.png";
+            settingsBtn.Padding = 5;
+            settingsBtn.BackgroundColor = Color.FromArgb("#00000000");
+            settingsBtn.HorizontalOptions = LayoutOptions.Start;
+
             settingsBtn.Loaded += mainPage.ResizeTemplateButton;
             settingsBtn.Pressed += mainPage.DisplayCategorySettings;
             this.Add(settingsBtn, 2, 1);
@@ -70,6 +72,8 @@ namespace Doolist
             TapGestureRecognizer TGR = new TapGestureRecognizer();
             TGR.Tapped += (s, e) => { mainPage.SwitchToNotesMode(source); };
             this.GestureRecognizers.Add(TGR);
+
+            
         }
 
 
