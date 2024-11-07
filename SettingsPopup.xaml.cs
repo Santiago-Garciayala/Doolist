@@ -6,7 +6,7 @@ namespace Doolist;
 
 public partial class SettingsPopup
 {
-    public SettingsPopup(double X, double Y)
+    public SettingsPopup(VisualElement parentOfSender)
     {
         InitializeComponent();
 
@@ -16,7 +16,12 @@ public partial class SettingsPopup
         TGR.Tapped += (s, e) => { MopupService.Instance.PopAsync(); };
         absLayout.GestureRecognizers.Add(TGR);
 
-        AbsoluteLayout.SetLayoutBounds(stack, new Rect(X - stack.Width, Y - stack.Height, stack.Width, stack.Height));
+        //magic values that probably only work for windows, but the buttons are not being rendered on android anyways
+        double X = parentOfSender.X + parentOfSender.Width * .84; 
+        double Y = parentOfSender.Y + parentOfSender.Height * 1.7;
+        AbsoluteLayout.SetLayoutBounds(stack, new Rect(X, Y, stack.Width, stack.Height));
+
+        
     }
 
     //this does NOT handle event handlers associated with a button, do that separately
@@ -28,11 +33,12 @@ public partial class SettingsPopup
             TextColor = Color.FromArgb("#FF000000"),
             BackgroundColor = Color.FromArgb("#FF888888"),
             Padding = new Thickness(50, 0, 50, 0),
-            Margin = 1,
+            Margin = 0,
             FontSize = 12,
-            HorizontalOptions = LayoutOptions.CenterAndExpand,
-            BorderWidth = 3,
-            BorderColor = Color.FromArgb("#FF000000")
+            HorizontalOptions = LayoutOptions.FillAndExpand,
+            BorderWidth = 2,
+            BorderColor = Color.FromArgb("#FF000000"),
+            CornerRadius = 0
         };
 
         stack.Add(btn);

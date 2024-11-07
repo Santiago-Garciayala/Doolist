@@ -211,7 +211,7 @@ namespace Doolist
             CategoryDisplay parent = (CategoryDisplay)imgBtn.Parent;
             Category src = parent.source;
 
-            MopupService.Instance.PushAsync(new CategorySettingsPopup(src, imgBtn.X, imgBtn.Y));
+            MopupService.Instance.PushAsync(new CategorySettingsPopup(src, parent));
         }
 
         public void DisplayListSettings(object sender, EventArgs e)

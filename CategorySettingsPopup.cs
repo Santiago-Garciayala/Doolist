@@ -11,7 +11,8 @@ namespace Doolist
     public class CategorySettingsPopup : SettingsPopup
     {
         Category category { get; set; }
-        public CategorySettingsPopup(Category cat, double X, double Y) : base(X, Y){
+        public CategorySettingsPopup(Category cat, VisualElement parentOfSender) : base(parentOfSender)
+        {
             category = cat;
 
             Button RenameButton = CreateButton("Rename");
