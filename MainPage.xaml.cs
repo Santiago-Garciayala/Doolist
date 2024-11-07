@@ -20,7 +20,8 @@ namespace Doolist
 
     -fix UpdateBulletPointDisplays not actually updating in time when on a note loaded from user data*
     -fix plus button position
-    -fix positioning of template buttons android
+    -fix template buttons not showing up on Android - I straight up cannot fix this, not in time anyways. Must be a MAUI issue
+    -fix list count in catergory only displaying 1 (this used to work i didnt change anything???)
 
     after settings implemented: 
     -implement sorting of elements
@@ -202,11 +203,15 @@ namespace Doolist
 
         public void DisplaySettings(object sender, EventArgs e)
         {
-            MopupService.Instance.PushAsync(new CategorySettings()); //change this later, testing android
+            //TODO
         }
         public void DisplayCategorySettings(object sender, EventArgs e)
         {
-            MopupService.Instance.PushAsync(new CategorySettings());
+            ImageButton imgBtn = (ImageButton)sender;
+            CategoryDisplay parent = (CategoryDisplay)imgBtn.Parent;
+            Category src = parent.source;
+
+            MopupService.Instance.PushAsync(new CategorySettingsPopup(src, imgBtn.X, imgBtn.Y));
         }
 
         public void DisplayListSettings(object sender, EventArgs e)

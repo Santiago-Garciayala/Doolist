@@ -46,7 +46,6 @@ namespace Doolist
             Label countLabel = new Label { Text = source.CountDisplay };
             this.Add(countLabel, 0, 1);
 
-            //I FIGURED OUT WHY THIS DOESNT WORK ON ADROID SO TODO: MAKE THEM ALL FAKE IMAGE BUTTONS (by turning them into Images and adding a TGR)
             ImageButton pinned = new ImageButton
             {
                 Source = "pin.png",

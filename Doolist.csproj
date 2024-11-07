@@ -76,10 +76,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiXaml Update="CategorySettings.xaml">
+	  <MauiXaml Update="ImportancePopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="ImportancePopup.xaml">
+	  <MauiXaml Update="SettingsPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
