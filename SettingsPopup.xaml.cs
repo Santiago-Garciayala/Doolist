@@ -17,6 +17,7 @@ public partial class SettingsPopup
         absLayout.GestureRecognizers.Add(TGR);
 
         //magic values that probably only work for windows, but the buttons are not being rendered on android anyways
+        //had to use the parent and not the sender itself cuz otherwise it wasnt changing the position at all
         double X = parentOfSender.X + parentOfSender.Width * .84; 
         double Y = parentOfSender.Y + parentOfSender.Height * 1.7;
         AbsoluteLayout.SetLayoutBounds(stack, new Rect(X, Y, stack.Width, stack.Height));

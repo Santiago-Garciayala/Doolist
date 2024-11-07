@@ -32,7 +32,7 @@ namespace Doolist
     {
         //mode determines what type of page is displayed cuz i didnt wanna figure out how to navigate with AppShell
         //0 for categories, 1 for lists, 2 for specific list 
-        private int mode = 0;
+        public int mode { get; set; } = 0;
         public ObservableCollection<Category> categories;
         public Category currentCategory;
         public TodoList currentList;
@@ -203,7 +203,20 @@ namespace Doolist
 
         public void DisplaySettings(object sender, EventArgs e)
         {
-            //TODO
+            ImageButton imgBtn = (ImageButton)sender;
+            Grid parent = (Grid)imgBtn.Parent;
+            switch (mode)
+            {
+                case 0:
+                    //TODO
+                    break;
+                case 1:
+                    MopupService.Instance.PushAsync(new CategorySettingsPopup(currentCategory, parent));
+                    break;
+                case 2:
+                    MopupService.Instance.PushAsync(new ListSettingsPopup(currentList, parent));
+                    break;
+            }
         }
         public void DisplayCategorySettings(object sender, EventArgs e)
         {
@@ -216,7 +229,11 @@ namespace Doolist
 
         public void DisplayListSettings(object sender, EventArgs e)
         {
-            //TODO
+            ImageButton imgBtn = (ImageButton)sender;
+            TodoListDisplay parent = (TodoListDisplay)imgBtn.Parent;
+            TodoList src = parent.source;
+
+            MopupService.Instance.PushAsync(new ListSettingsPopup(src, parent));
         }
 
         public void UpdateCategoryDisplays(bool onlyPush)

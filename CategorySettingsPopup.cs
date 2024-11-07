@@ -15,7 +15,7 @@ namespace Doolist
         {
             category = cat;
 
-            Button RenameButton = CreateButton("Rename");
+            Button RenameButton = CreateButton("Rename Category");
             RenameButton.Clicked += OnRenameButtonClicked;
 
             Button SortAlphabeticallyButton = CreateButton("Sort Alphabetically");
